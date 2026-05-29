@@ -868,13 +868,15 @@ OSXKeyState::getGroups(GroupList& groups) const
     }
 
     // get each layout
+    // kbds is intentionally not released here: the TISInputSourceRef pointers
+    // stored in `groups` are non-retained references into kbds. Releasing kbds
+    // would free the backing objects and leave dangling pointers in m_groups.
     groups.clear();
     for (CFIndex i = 0; i < n; ++i) {
         TISInputSourceRef keyboardLayout =
             (TISInputSourceRef)CFArrayGetValueAtIndex(kbds, i);
         groups.push_back(keyboardLayout);
     }
-    CFRelease(kbds);
     return true;
 }
 
